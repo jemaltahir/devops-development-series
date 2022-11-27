@@ -1,31 +1,17 @@
-FROM golang as debug
+# syntax=docker/dockerfile:1
 
-# installing git
-RUN apk update && apk upgrade && \
-    apk add --no-cache git \
-        dpkg \
-        gcc \
-        git 
+FROM golang:1.18-alpine
 
-ENV GOPATH /go
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+WORKDIR /app
 
-RUN go get github.com/sirupsen/logrus
-RUN go get github.com/buaazp/fasthttprouter
-RUN go get github.com/valyala/fasthttp
-RUN go get github.com/go-delve/delve/cmd/dlv
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
 
-WORKDIR /go/src/work
-COPY ./src /go/src/work/
+COPY *.go ./
 
-RUN go build -o app
-### Run the Delve debugger ###
-COPY ./dlv.sh /
-RUN chmod +x /dlv.sh 
-ENTRYPOINT [ "/dlv.sh"]
+RUN go build -o /docker-gs-ping
 
-###########START NEW IMAGE###################
+EXPOSE 8080
 
-FROM alpine as prod
-COPY --from=debug /go/src/work/app /
-CMD ./app
+CMD [ "/docker-gs-ping" ]
