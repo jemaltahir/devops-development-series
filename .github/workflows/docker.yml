@@ -14,7 +14,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: docker build golang
         run: |
-          docker build ./golang -t jemalmtahir/golang:1.0.0
+          docker build ./golang -t jemalmtahir/docker-gs-ping:1.0.0
       - name: docker push
         run: |
-          docker push jemalmtahir/golang:1.0.0
+          docker push jemalmtahir/docker-gs-ping:1.0.0
