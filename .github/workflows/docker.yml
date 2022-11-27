@@ -7,6 +7,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: docker build
+      - name: docker login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}   
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}  
         run: |
-          docker build
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: docker build golang
+        run: |
+          docker build ./golang -t jemalmtahir/golang:1.0.0
+      - name: docker push
+        run: |
+          docker push jemalmtahir/golang:1.0.0
